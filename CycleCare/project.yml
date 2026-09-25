@@ -1,0 +1,46 @@
+name: CycleCare
+options:
+  bundleIdPrefix: com.devshujon
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+packages:
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    from: 11.0.0
+  GoogleMobileAds:
+    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
+    from: 11.0.0
+targets:
+  CycleCare:
+    type: application
+    platform: iOS
+    sources:
+      - path: CycleCare
+    resources:
+      - path: CycleCare/Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.devshujon.cyclecare
+        INFOPLIST_FILE: CycleCare/Resources/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: YES
+    dependencies:
+      - package: Firebase
+        product: FirebaseAuth
+      - package: Firebase
+        product: FirebaseMessaging
+      - package: GoogleMobileAds
+        product: GoogleMobileAds
+    entitlements:
+      path: CycleCare/Resources/CycleCare.entitlements
+      properties:
+        com.apple.developer.applesignin:
+          - Default

@@ -1,0 +1,43 @@
+name: iOS Build Verify
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - cursor/cyclecare-ios-d544
+      - main
+
+jobs:
+  build:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: CycleCare
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build for iOS Simulator
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project CycleCare.xcodeproj \
+            -scheme CycleCare \
+            -configuration Debug \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+            -derivedDataPath ./build \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee xcodebuild.log
+          grep -q "BUILD SUCCEEDED" xcodebuild.log
+
+      - name: Upload xcodebuild log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: CycleCare/xcodebuild.log
